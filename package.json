@@ -1,5 +1,5 @@
 {
-  "name": "logger-js",
+  "name": "@arch-herobrine/logger.js",
   "version": "0.1.0",
   "description": "console logger package",
   "main": "dist/index.js",
