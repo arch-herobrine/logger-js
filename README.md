@@ -17,17 +17,17 @@ new Logger(options: LoggerOptions);
 #### options
 |Parameter|Type|Description|Optional|
 |--|--|--|--|
-|timeZone|String|Time zone used for logs|false|
+|timeZone|String|Time zone used for logs||
 ### Methods
 #### .log(message?,...optionalParams)
 Output log to console.
-|Parametar|Type|optional|Default|Description|
+|Parametar|Type|Optional|Default|Description|
 |--|--|--|--|--|
 |message|any|✓|none|Almost the same as `console.log()`.|
 |optionalParams|any|✓|none|Almost the same as `console.log()`.|
 #### .info(message?,...optionalParams)
 Output info log to console.
-|Parametar|Type|optional|Default|Description|
+|Parametar|Type|Optional|Default|Description|
 |--|--|--|--|--|
 |message|any|✓|none|Almost the same as `console.log()`.|
 |optionalParams|any|✓|none|Almost the same as `console.log()`.|
@@ -39,7 +39,7 @@ Output warn log to console.
 |optionalParams|any|✓|none|Almost the same as `console.warn()`.|
 #### .error(message?,...optionalParams)
 Output error log to console.
-|Parametar|Type|optional|Default|Description|
+|Parametar|Type|Optional|Default|Description|
 |--|--|--|--|--|
 |message|any|✓|none|Almost the same as `console.error()`.|
 |optionalParams|any|✓|none|Almost the same as `console.error()`.|
