@@ -1,5 +1,4 @@
 import { EventEmitter } from "node:events";
-import TimeZoneOffset from "./timezone";
 
 type LogType = "log" | "infoLog" | "warnLog" | "errorLog";
 type TimeZone = "Africa/Johannesburg" | "Africa/Lagos" | "Africa/Windhoek" | "America/Adak" | "America/Anchorage" | "America/Argentina/Buenos_Aires" | "America/Bogota" | "America/Caracas" | "America/Chicago" | "America/Denver" | "America/Godthab" | "America/Guatemala" | "America/Halifax" | "America/Los_Angeles" | "America/Montevideo" | "America/New_York" | "America/Noronha" | "America/Phoenix" | "America/Santiago" | "America/Santo_Domingo" | "America/St_Johns" | "Asia/Baghdad" | "Asia/Baku" | "Asia/Beirut" | "Asia/Dhaka" | "Asia/Dubai" | "Asia/Irkutsk" | "Asia/Jakarta" | "Asia/Kabul" | "Asia/Kamchatka" | "Asia/Karachi" | "Asia/Kathmandu" | "Asia/Kolkata" | "Asia/Krasnoyarsk" | "Asia/Omsk" | "Asia/Rangoon" | "Asia/Shanghai" | "Asia/Tehran" | "Asia/Tokyo" | "Asia/Vladivostok" | "Asia/Yakutsk" | "Asia/Yekaterinburg" | "Atlantic/Azores" | "Atlantic/Cape_Verde" | "Australia/Adelaide" | "Australia/Brisbane" | "Australia/Darwin" | "Australia/Eucla" | "Australia/Lord_Howe" | "Australia/Sydney" | "Etc/GMT+12" | "Europe/Berlin" | "Europe/London" | "Europe/Moscow" | "Pacific/Apia" | "Pacific/Auckland" | "Pacific/Chatham" | "Pacific/Easter" | "Pacific/Gambier" | "Pacific/Honolulu" | "Pacific/Kiritimati" | "Pacific/Majuro" | "Pacific/Marquesas" | "Pacific/Norfolk" | "Pacific/Noumea" | "Pacific/Pago_Pago" | "Pacific/Pitcairn" | "Pacific/Tongatapu" | "UTC";
@@ -50,8 +49,7 @@ export default class Logger<T extends (...args: any[]) => void> {
         this._eventEmitter.off(event, listener);
     }
     private getDateString(time?: Date | number): string {
-        let str = new Intl.DateTimeFormat("ja-JP", { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: this.timeZone }).format(time ?? new Date());
-        return str + TimeZoneOffset[this.timeZone]
+        return `${new Intl.DateTimeFormat("ja-JP", { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: this.timeZone }).format(time ?? new Date())} (UTC${TimeZoneOffset["Asia/Tokyo"]})`
     }
     private isValidTimeZone(tz: string): boolean {
         try {
@@ -68,4 +66,75 @@ class style {
     static ansi(str: string): string {
         return `\x1b[${str}`
     }
+}
+const TimeZoneOffset = {
+    "Africa/Johannesburg": "+02:00",
+    "Africa/Lagos": "+01:00",
+    "Africa/Windhoek": "+01:00",
+    "America/Adak": "-10:00",
+    "America/Anchorage": "-09:00",
+    "America/Argentina/Buenos_Aires": "-03:00",
+    "America/Bogota": "-05:00",
+    "America/Caracas": "-04:30",
+    "America/Chicago": "-06:00",
+    "America/Denver": "-07:00",
+    "America/Godthab": "-03:00",
+    "America/Guatemala": "-06:00",
+    "America/Halifax": "-04:00",
+    "America/Los_Angeles": "-08:00",
+    "America/Montevideo": "-03:00",
+    "America/New_York": "-05:00",
+    "America/Noronha": "-02:00",
+    "America/Phoenix": "-07:00",
+    "America/Santiago": "-04:00",
+    "America/Santo_Domingo": "-04:00",
+    "America/St_Johns": "-03:30",
+    "Asia/Baghdad": "+03:00",
+    "Asia/Baku": "+04:00",
+    "Asia/Beirut": "+02:00",
+    "Asia/Dhaka": "+06:00",
+    "Asia/Dubai": "+04:00",
+    "Asia/Irkutsk": "+09:00",
+    "Asia/Jakarta": "+07:00",
+    "Asia/Kabul": "+04:30",
+    "Asia/Kamchatka": "+12:00",
+    "Asia/Karachi": "+05:00",
+    "Asia/Kathmandu": "+05:45",
+    "Asia/Kolkata": "+05:30",
+    "Asia/Krasnoyarsk": "+08:00",
+    "Asia/Omsk": "+07:00",
+    "Asia/Rangoon": "+06:30",
+    "Asia/Shanghai": "+08:00",
+    "Asia/Tehran": "+03:30",
+    "Asia/Tokyo": "+09:00",
+    "Asia/Vladivostok": "+11:00",
+    "Asia/Yakutsk": "+10:00",
+    "Asia/Yekaterinburg": "+06:00",
+    "Atlantic/Azores": "-01:00",
+    "Atlantic/Cape_Verde": "-01:00",
+    "Australia/Adelaide": "+09:30",
+    "Australia/Brisbane": "+10:00",
+    "Australia/Darwin": "+09:00",
+    "Australia/Eucla": "+08:45",
+    "Australia/Lord_Howe": "+10:30",
+    "Australia/Sydney": "+10:00",
+    "Etc/GMT+12": "-12:00",
+    "Europe/Berlin": "+01:00",
+    "Europe/London": "+00:00",
+    "Europe/Moscow": "+04:00",
+    "Pacific/Apia": "+13:00",
+    "Pacific/Auckland": "+12:00",
+    "Pacific/Chatham": "+12:45",
+    "Pacific/Easter": "-06:00",
+    "Pacific/Gambier": "-09:00",
+    "Pacific/Honolulu": "-10:00",
+    "Pacific/Kiritimati": "+14:00",
+    "Pacific/Majuro": "+12:00",
+    "Pacific/Marquesas": "-09:30",
+    "Pacific/Norfolk": "+11:30",
+    "Pacific/Noumea": "+11:00",
+    "Pacific/Pago_Pago": "-11:00",
+    "Pacific/Pitcairn": "-08:00",
+    "Pacific/Tongatapu": "+13:00",
+    "UTC": "+00:00",
 }
