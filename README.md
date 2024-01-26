@@ -1,4 +1,8 @@
 # Logger-js
+## Installation
+```bash
+$ npm install @arch-herobrine/logger.js
+```
 ## Usage
 ```ts
 import Logger from "@arch-herobrine/logger.js"
@@ -15,9 +19,9 @@ logger.log("this is log");
 new Logger(options: LoggerOptions);
 ```
 #### options
-|Parameter|Type|Optional|Description|
-|--|--|--|--|
-|timeZone|String||Time zone used for logs|
+|Parameter|Type|Optional|Default|Description|
+|--|--|--|--|--|
+|timeZone|String|✓|"UTC"|Time zone used for logs|
 ### Methods
 #### .log(message?,...optionalParams)
 Output log to console.
