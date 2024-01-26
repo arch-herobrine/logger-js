@@ -3,16 +3,16 @@ import { EventEmitter } from "node:events";
 type LogType = "log" | "infoLog" | "warnLog" | "errorLog";
 type TimeZone = "Africa/Johannesburg" | "Africa/Lagos" | "Africa/Windhoek" | "America/Adak" | "America/Anchorage" | "America/Argentina/Buenos_Aires" | "America/Bogota" | "America/Caracas" | "America/Chicago" | "America/Denver" | "America/Godthab" | "America/Guatemala" | "America/Halifax" | "America/Los_Angeles" | "America/Montevideo" | "America/New_York" | "America/Noronha" | "America/Phoenix" | "America/Santiago" | "America/Santo_Domingo" | "America/St_Johns" | "Asia/Baghdad" | "Asia/Baku" | "Asia/Beirut" | "Asia/Dhaka" | "Asia/Dubai" | "Asia/Irkutsk" | "Asia/Jakarta" | "Asia/Kabul" | "Asia/Kamchatka" | "Asia/Karachi" | "Asia/Kathmandu" | "Asia/Kolkata" | "Asia/Krasnoyarsk" | "Asia/Omsk" | "Asia/Rangoon" | "Asia/Shanghai" | "Asia/Tehran" | "Asia/Tokyo" | "Asia/Vladivostok" | "Asia/Yakutsk" | "Asia/Yekaterinburg" | "Atlantic/Azores" | "Atlantic/Cape_Verde" | "Australia/Adelaide" | "Australia/Brisbane" | "Australia/Darwin" | "Australia/Eucla" | "Australia/Lord_Howe" | "Australia/Sydney" | "Etc/GMT+12" | "Europe/Berlin" | "Europe/London" | "Europe/Moscow" | "Pacific/Apia" | "Pacific/Auckland" | "Pacific/Chatham" | "Pacific/Easter" | "Pacific/Gambier" | "Pacific/Honolulu" | "Pacific/Kiritimati" | "Pacific/Majuro" | "Pacific/Marquesas" | "Pacific/Norfolk" | "Pacific/Noumea" | "Pacific/Pago_Pago" | "Pacific/Pitcairn" | "Pacific/Tongatapu" | "UTC";
 type LoggerOptions = {
-    timeZone: TimeZone;
+    timeZone?: TimeZone;
 }
 export default class Logger<T extends (...args: any[]) => void> {
     private readonly timeZone: TimeZone;
     private readonly _eventEmitter: EventEmitter;
     constructor(options: LoggerOptions) {
-        if (!this.isValidTimeZone(options.timeZone)) {
+        if (!this.isValidTimeZone(options.timeZone ?? "UTC")) {
             throw new TypeError("Invalid TimeZone");
         }
-        this.timeZone = options.timeZone;
+        this.timeZone = options.timeZone ?? "UTC";
         this._eventEmitter = new EventEmitter();
     }
     public log(message?: any, ...optionalParams: any[]): void {
