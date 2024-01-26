@@ -15,9 +15,9 @@ logger.log("this is log");
 new Logger(options: LoggerOptions);
 ```
 #### options
-|Parameter|Type|Description|Optional|
+|Parameter|Type|Optional|Description|
 |--|--|--|--|
-|timeZone|String|Time zone used for logs||
+|timeZone|String||Time zone used for logs|
 ### Methods
 #### .log(message?,...optionalParams)
 Output log to console.
