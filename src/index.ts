@@ -1,13 +1,19 @@
 import { EventEmitter } from "node:events";
+import { Console } from "node:console";
+import { Duplex } from "node:stream";
+import { Buffer } from "node:buffer";
 
 type LogType = "log" | "infoLog" | "warnLog" | "errorLog";
 type TimeZone = "Africa/Johannesburg" | "Africa/Lagos" | "Africa/Windhoek" | "America/Adak" | "America/Anchorage" | "America/Argentina/Buenos_Aires" | "America/Bogota" | "America/Caracas" | "America/Chicago" | "America/Denver" | "America/Godthab" | "America/Guatemala" | "America/Halifax" | "America/Los_Angeles" | "America/Montevideo" | "America/New_York" | "America/Noronha" | "America/Phoenix" | "America/Santiago" | "America/Santo_Domingo" | "America/St_Johns" | "Asia/Baghdad" | "Asia/Baku" | "Asia/Beirut" | "Asia/Dhaka" | "Asia/Dubai" | "Asia/Irkutsk" | "Asia/Jakarta" | "Asia/Kabul" | "Asia/Kamchatka" | "Asia/Karachi" | "Asia/Kathmandu" | "Asia/Kolkata" | "Asia/Krasnoyarsk" | "Asia/Omsk" | "Asia/Rangoon" | "Asia/Shanghai" | "Asia/Tehran" | "Asia/Tokyo" | "Asia/Vladivostok" | "Asia/Yakutsk" | "Asia/Yekaterinburg" | "Atlantic/Azores" | "Atlantic/Cape_Verde" | "Australia/Adelaide" | "Australia/Brisbane" | "Australia/Darwin" | "Australia/Eucla" | "Australia/Lord_Howe" | "Australia/Sydney" | "Etc/GMT+12" | "Europe/Berlin" | "Europe/London" | "Europe/Moscow" | "Pacific/Apia" | "Pacific/Auckland" | "Pacific/Chatham" | "Pacific/Easter" | "Pacific/Gambier" | "Pacific/Honolulu" | "Pacific/Kiritimati" | "Pacific/Majuro" | "Pacific/Marquesas" | "Pacific/Norfolk" | "Pacific/Noumea" | "Pacific/Pago_Pago" | "Pacific/Pitcairn" | "Pacific/Tongatapu" | "UTC";
 type LoggerOptions = {
     timeZone?: TimeZone;
 }
-export default class Logger<T extends (...args: any[]) => void> {
+export default class Logger<T extends (log: string) => void> {
     private readonly timeZone: TimeZone;
     private readonly _eventEmitter: EventEmitter;
+    private readonly _dummyOut = new DummyConsoleOut();
+    private readonly _dummyConsole = new Console(this._dummyOut, this._dummyOut);
+
     constructor(options: LoggerOptions) {
         if (!this.isValidTimeZone(options.timeZone ?? "UTC")) {
             throw new TypeError("Invalid TimeZone");
@@ -16,28 +22,36 @@ export default class Logger<T extends (...args: any[]) => void> {
         this._eventEmitter = new EventEmitter();
     }
     public log(message?: any, ...optionalParams: any[]): void {
-        let args = [...optionalParams];
-        args.unshift(`${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString()} ${style.ansi(`0;38;5;${0xf5}m`)}] ${message ?? ""}`);
-        console.log(...args, style.reset);
-        this._eventEmitter.emit("log", [message, ...optionalParams]);
+        this._dummyOut.once("data", (v: Buffer) => {
+            let out = `${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ] ${v.toString() + style.reset}`;
+            console.log(out);
+            this._eventEmitter.emit("log", out.replace(/\x1b\[[1-9,;]+[A-K,H,m]/, ""));
+        });
+        this._dummyConsole.log(message, ...optionalParams);
     }
     public info(message?: any, ...optionalParams: any[]): void {
-        let args = [...optionalParams];
-        args.unshift(`[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${message ?? ""}`);
-        console.log(...args, style.reset);
-        this._eventEmitter.emit("infoLog", [message, ...optionalParams]);
+        this._dummyOut.once("data", (v: Buffer) => {
+            let out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString() + style.reset}`;
+            console.log(out);
+            this._eventEmitter.emit("infoLog", out.replace(/\x1b\[[1-9,;]+[A-K,H,m]/, ""));
+        });
+        this._dummyConsole.log(message, ...optionalParams);
     }
     public warn(message?: any, ...optionalParams: any[]): void {
-        let args = [...optionalParams];
-        args.unshift(`[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${message ?? ""}`);
-        console.warn(...args, style.reset);
-        this._eventEmitter.emit("warnLog", [message, ...optionalParams]);
+        this._dummyOut.once("data", (v: Buffer) => {
+            let out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString() + style.reset}`;
+            console.warn(out);
+            this._eventEmitter.emit("warnLog", out.replace(/\x1b\[[1-9,;]+[A-K,H,m]/, ""));
+        });
+        this._dummyConsole.warn(message, ...optionalParams);
     }
     public error(message?: any, ...optionalParams: any[]): void {
-        let args = [...optionalParams];
-        args.unshift(`[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${message ?? ""}`);
-        console.error(...args, style.reset);
-        this._eventEmitter.emit("errorLog", [message, ...optionalParams]);
+        this._dummyOut.once("data", (v: Buffer) => {
+            let out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString() + style.reset}`;
+            console.error(out);
+            this._eventEmitter.emit("errorLog", out.replace(/\x1b\[[1-9,;]+[A-K,H,m]/, ""));
+        });
+        this._dummyConsole.log(message, ...optionalParams);
     }
     public on(event: LogType, listener: T): void {
         this._eventEmitter.on(event, listener);
@@ -137,4 +151,16 @@ const TimeZoneOffset = {
     "Pacific/Pitcairn": "-08:00",
     "Pacific/Tongatapu": "+13:00",
     "UTC": "+00:00",
+}
+
+class DummyConsoleOut extends Duplex {
+    private _data: Buffer = Buffer.alloc(0);
+    _read(size: number): void {
+        this.push(this._data);
+        this._data = Buffer.alloc(0);
+    }
+    _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null | undefined) => void): void {
+        const buf = Buffer.from(chunk, encoding);
+        this._data = Buffer.concat([this._data, buf]);
+    }
 }
