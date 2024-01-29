@@ -52,19 +52,19 @@ Output error log to console.
 Emitted whenever the function `Logger.log()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
 #### infoLog
 Emitted whenever the function `Logger.info()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
 #### warnLog
 Emitted whenever the function `Logger.warn()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
 #### errorLog
 Emitted whenever the function `Logger.error()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
