@@ -10,7 +10,7 @@ import Logger from "@arch-herobrine/logger.js"
 const logger = new Logger({timeZone:"UTC"});
 
 logger.log("this is log");
-// -> [ log --- 2024/01/31 16:00:00 ] this is log
+// -> [ log --- 2024/01/31 16:00:00 (UTC+00:00) ] this is log
 ```
 # Class(es)
 ## Logger
@@ -52,19 +52,19 @@ Output error log to console.
 Emitted whenever the function `Logger.log()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
 #### infoLog
 Emitted whenever the function `Logger.info()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
 #### warnLog
 Emitted whenever the function `Logger.warn()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
 #### errorLog
 Emitted whenever the function `Logger.error()` is executed.
 |Parameter|Type|Description|
 |--|--|--|
-|args|string|String output to console.|
+|str|string|String output to console.|
