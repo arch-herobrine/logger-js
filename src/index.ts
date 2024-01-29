@@ -15,7 +15,7 @@ export default class Logger<T extends (log: string) => void> {
     private readonly _dummyConsole = new Console(this._dummyOut, this._dummyOut);
 
     constructor(options: LoggerOptions) {
-        if (!this.isValidTimeZone(options.timeZone ?? "UTC")) {
+        if (!Logger.isValidTimeZone(options.timeZone ?? "UTC")) {
             throw new TypeError("Invalid TimeZone");
         }
         this.timeZone = options.timeZone ?? "UTC";
@@ -65,7 +65,7 @@ export default class Logger<T extends (log: string) => void> {
     private getDateString(time?: Date | number): string {
         return `${new Intl.DateTimeFormat("ja-JP", { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: this.timeZone }).format(time ?? new Date())} (UTC${TimeZoneOffset["Asia/Tokyo"]})`
     }
-    private isValidTimeZone(tz: string): boolean {
+    private static isValidTimeZone(tz: string): boolean {
         try {
             Intl.DateTimeFormat(undefined, { timeZone: tz });
             return true;
