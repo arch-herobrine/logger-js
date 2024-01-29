@@ -23,7 +23,7 @@ export default class Logger<T extends (log: string) => void> {
     }
     public log(message?: any, ...optionalParams: any[]): void {
         this._dummyOut.once("data", (v: Buffer) => {
-            const out = `${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ] ${v.toString() + style.reset}`;
+            const out = `${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ] ${v.toString().slice(0, -1) + style.reset}`;
             console.log(out);
             this._eventEmitter.emit("log", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
         });
@@ -31,7 +31,7 @@ export default class Logger<T extends (log: string) => void> {
     }
     public info(message?: any, ...optionalParams: any[]): void {
         this._dummyOut.once("data", (v: Buffer) => {
-            const out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString() + style.reset}`;
+            const out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString().slice(0, -1) + style.reset}`;
             console.log(out);
             this._eventEmitter.emit("infoLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
         });
@@ -39,7 +39,7 @@ export default class Logger<T extends (log: string) => void> {
     }
     public warn(message?: any, ...optionalParams: any[]): void {
         this._dummyOut.once("data", (v: Buffer) => {
-            const out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString() + style.reset}`;
+            const out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString().slice(0, -1) + style.reset}`;
             console.warn(out);
             this._eventEmitter.emit("warnLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
         });
@@ -47,7 +47,7 @@ export default class Logger<T extends (log: string) => void> {
     }
     public error(message?: any, ...optionalParams: any[]): void {
         this._dummyOut.once("data", (v: Buffer) => {
-            const out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString() + style.reset}`;
+            const out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString().slice(0, -1) + style.reset}`;
             console.error(out);
             this._eventEmitter.emit("errorLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
         });
