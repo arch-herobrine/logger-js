@@ -10,7 +10,7 @@ import Logger from "@arch-herobrine/logger.js"
 const logger = new Logger({timeZone:"UTC"});
 
 logger.log("this is log");
-// -> [ log --- 2024/01/31 16:00:00 ] this is log
+// -> [ log --- 2024/01/31 16:00:00 (UTC+00:00) ] this is log
 ```
 # Class(es)
 ## Logger
