@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import { Console } from "node:console";
-import { Duplex } from "node:stream";
+import { Writable } from "node:stream";
 import { Buffer } from "node:buffer";
 
 type LogType = "log" | "infoLog" | "warnLog" | "errorLog";
@@ -11,8 +11,6 @@ type LoggerOptions = {
 export default class Logger<T extends (log: string) => void> {
     private readonly timeZone: TimeZone;
     private readonly _eventEmitter: EventEmitter;
-    private readonly _dummyOut = new DummyConsoleOut();
-    private readonly _dummyConsole = new Console(this._dummyOut, this._dummyOut);
 
     constructor(options: LoggerOptions) {
         if (!Logger.isValidTimeZone(options.timeZone ?? "UTC")) {
@@ -22,36 +20,36 @@ export default class Logger<T extends (log: string) => void> {
         this._eventEmitter = new EventEmitter();
     }
     public log(message?: any, ...optionalParams: any[]): void {
-        this._dummyOut.once("data", (v: Buffer) => {
-            const out = `${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ] ${v.toString().slice(0, -1) + style.reset}`;
-            console.log(out);
-            this._eventEmitter.emit("log", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        });
-        this._dummyConsole.log(message, ...optionalParams);
+        const stdoutStderr = new DummyConsoleOut();
+        new Console(stdoutStderr).log(message, ...optionalParams);
+        const out = `${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        console.log(out);
+        this._eventEmitter.emit("log", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
+        stdoutStderr.destroy();
     }
     public info(message?: any, ...optionalParams: any[]): void {
-        this._dummyOut.once("data", (v: Buffer) => {
-            const out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString().slice(0, -1) + style.reset}`;
-            console.log(out);
-            this._eventEmitter.emit("infoLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        });
-        this._dummyConsole.log(message, ...optionalParams);
+        const stdoutStderr = new DummyConsoleOut();
+        new Console(stdoutStderr).log(message, ...optionalParams);
+        const out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        console.log(out);
+        this._eventEmitter.emit("infoLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
+        stdoutStderr.destroy();
     }
     public warn(message?: any, ...optionalParams: any[]): void {
-        this._dummyOut.once("data", (v: Buffer) => {
-            const out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString().slice(0, -1) + style.reset}`;
-            console.warn(out);
-            this._eventEmitter.emit("warnLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        });
-        this._dummyConsole.warn(message, ...optionalParams);
+        const stdoutStderr = new DummyConsoleOut();
+        new Console(stdoutStderr).warn(message, ...optionalParams);
+        const out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        console.warn(out);
+        this._eventEmitter.emit("warnLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
+        stdoutStderr.destroy();
     }
     public error(message?: any, ...optionalParams: any[]): void {
-        this._dummyOut.once("data", (v: Buffer) => {
-            const out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${v.toString().slice(0, -1) + style.reset}`;
-            console.error(out);
-            this._eventEmitter.emit("errorLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        });
-        this._dummyConsole.log(message, ...optionalParams);
+        const stdoutStderr = new DummyConsoleOut();
+        new Console(stdoutStderr).error(message, ...optionalParams);
+        const out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        console.error(out);
+        this._eventEmitter.emit("errorLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
+        stdoutStderr.destroy();
     }
     public on(event: LogType, listener: T): void {
         this._eventEmitter.on(event, listener);
@@ -153,12 +151,8 @@ const TimeZoneOffset = {
     "UTC": "+00:00",
 }
 
-class DummyConsoleOut extends Duplex {
-    private _data: Buffer = Buffer.alloc(0);
-    _read(size: number): void {
-        this.push(this._data);
-        this._data = Buffer.alloc(0);
-    }
+class DummyConsoleOut extends Writable {
+    public _data: Buffer = Buffer.alloc(0);
     _write(chunk: any, encoding: BufferEncoding, callback: (error?: Error | null | undefined) => void): void {
         const buf = Buffer.from(chunk, encoding);
         this._data = Buffer.concat([this._data, buf]);
