@@ -20,36 +20,28 @@ export default class Logger<T extends (log: string) => void> {
         this._eventEmitter = new EventEmitter();
     }
     public log(message?: any, ...optionalParams: any[]): void {
-        const stdoutStderr = new DummyConsoleOut();
-        new Console(stdoutStderr).log(message, ...optionalParams);
-        const out = `${style.ansi(`38;5;${0xf5}m`)}[ log ---${style.ansi("3m")} ${this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        const formatted = Logger.format(message, ...optionalParams);
+        const out = `${style.ansi(`38;5;${0xf5}m`)}[ log --- ${style.ansi("3m") + this.getDateString() + style.ansi(`0;38;5;${0xf5}m`)} ]${formatted.includes("\n") ? "\n" : " "}${formatted + style.reset}`;
         console.log(out);
         this._eventEmitter.emit("log", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        stdoutStderr.destroy();
     }
     public info(message?: any, ...optionalParams: any[]): void {
-        const stdoutStderr = new DummyConsoleOut();
-        new Console(stdoutStderr).log(message, ...optionalParams);
-        const out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        const formatted = Logger.format(message, ...optionalParams);
+        const out = `[ ${style.ansi("32m")}info${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ]${formatted.includes("\n") ? "\n" : " "}${formatted + style.reset}`;
         console.log(out);
         this._eventEmitter.emit("infoLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        stdoutStderr.destroy();
     }
     public warn(message?: any, ...optionalParams: any[]): void {
-        const stdoutStderr = new DummyConsoleOut();
-        new Console(stdoutStderr).warn(message, ...optionalParams);
-        const out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        const formatted = Logger.format(message, ...optionalParams);
+        const out = `[ ${style.ansi("33m")}warn${style.reset} -- ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ]${formatted.includes("\n") ? "\n" : " "}${formatted + style.reset}`;
         console.warn(out);
         this._eventEmitter.emit("warnLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        stdoutStderr.destroy();
     }
     public error(message?: any, ...optionalParams: any[]): void {
-        const stdoutStderr = new DummyConsoleOut();
-        new Console(stdoutStderr).error(message, ...optionalParams);
-        const out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ] ${stdoutStderr._data.toString().slice(0, -1) + style.reset}`;
+        const formatted = Logger.format(message, ...optionalParams);
+        const out = `[ ${style.ansi("31m")}error${style.reset} - ${style.ansi(`3;38;5;${0xf5}m`) + this.getDateString() + style.reset} ]${formatted.includes("\n") ? "\n" : " "}${formatted + style.reset}`;
         console.error(out);
         this._eventEmitter.emit("errorLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
-        stdoutStderr.destroy();
     }
     public on(event: LogType, listener: T): void {
         this._eventEmitter.on(event, listener);
@@ -71,6 +63,13 @@ export default class Logger<T extends (log: string) => void> {
         catch (e) {
             return false;
         }
+    }
+    private static format(message?: any, ...optionalParams: any[]):string {
+        const stdoutStderr = new DummyConsoleOut();
+        new Console(stdoutStderr).log(message, ...optionalParams);
+        const formatted = stdoutStderr._data.toString().slice(0, -1);
+        stdoutStderr.destroy();
+        return formatted;
     }
 }
 class style {
