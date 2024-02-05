@@ -8,7 +8,9 @@ type TimeZone = "Africa/Johannesburg" | "Africa/Lagos" | "Africa/Windhoek" | "Am
 type LoggerOptions = {
     timeZone?: TimeZone;
 }
-export default class Logger<T extends (log: string) => void> {
+
+type Listener = (log: string) => void;
+export default class Logger {
     private readonly timeZone: TimeZone;
     private readonly _eventEmitter: EventEmitter;
 
@@ -43,13 +45,13 @@ export default class Logger<T extends (log: string) => void> {
         console.error(out);
         this._eventEmitter.emit("errorLog", out.replace(/\x1b\[([0-9]|[;])+([A-K]|[Hm])/g, ""));
     }
-    public on(event: LogType, listener: T): void {
+    public on(event: LogType, listener: Listener): void {
         this._eventEmitter.on(event, listener);
     }
-    public once(event: LogType, listener: T): void {
+    public once(event: LogType, listener: Listener): void {
         this._eventEmitter.once(event, listener);
     }
-    public off(event: LogType, listener: T): void {
+    public off(event: LogType, listener: Listener): void {
         this._eventEmitter.off(event, listener);
     }
     private getDateString(time?: Date | number): string {
