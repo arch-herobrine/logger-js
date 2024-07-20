@@ -10,7 +10,7 @@ type LoggerOptions = {
 }
 
 type Listener = (log: string) => void;
-export default class Logger {
+class Logger {
     private readonly timeZone: TimeZone;
     private readonly _eventEmitter: EventEmitter;
 
@@ -159,3 +159,6 @@ class DummyConsoleOut extends Writable {
         this._data = Buffer.concat([this._data, buf]);
     }
 }
+
+export default Logger;
+module.exports=Logger;

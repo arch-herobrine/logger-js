@@ -1,5 +1,4 @@
-import Logger from "./dist/index.js"
-
+const Logger = require("./dist/index");
 const logger = new Logger({timeZone:"UTC"});
 
 

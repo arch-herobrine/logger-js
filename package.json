@@ -4,7 +4,12 @@
   "description": "console logger package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs",
+    "node": "./dist/index.mjs",
+    "default": "./dist/index.cjs"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node ./scripts/build.js",
