@@ -1,4 +1,4 @@
-const Logger = require("./dist/index");
+const Logger = require("./dist/index.cjs");
 const logger = new Logger({timeZone:"UTC"});
 
 

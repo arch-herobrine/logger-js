@@ -4,6 +4,7 @@
   "description": "console logger package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "exports": {
     "import": "./dist/index.mjs",
     "require": "./dist/index.cjs",
