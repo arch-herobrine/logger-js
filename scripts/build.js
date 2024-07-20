@@ -1,5 +1,5 @@
-import fs from "node:fs"
-import cp from "node:child_process"
+const fs = require("node:fs");
+const cp = require("node:child_process");
 
 try {
     fs.rmdirSync("./dist");
